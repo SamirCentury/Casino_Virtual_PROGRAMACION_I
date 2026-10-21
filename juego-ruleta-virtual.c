@@ -18,11 +18,14 @@ int MostrarMenuRuleta(void) {
     printf("\n==========================================\n");
     printf("         MESA DE RULETA EUROPEA           \n");
     printf("==========================================\n");
-    printf("1. Apostar a Pleno (Numero exacto) [35:1]\n");
-    printf("2. Apostar a Color (Rojo o Negro)  [1:1]\n");
-    printf("3. Salir de la Ruleta\n");
+    printf("1. Apostar a Pleno (Numero exacto)      [35:1]\n");
+    printf("2. Apostar a Color (Rojo o Negro)       [1:1]\n");
+    printf("3. Apostar Par o Impar                  [Paga 1:1]\n");
+    printf("4. Apostar Falta (1-18) / Pasa (19-36)  [Paga 1:1]\n");
+    printf("5. Apostar Docenas (1-12, 13-24, 25-36) [Paga 2:1]\n");
+    printf("6. Salir de la Ruleta\n");
     printf("==========================================\n");
-    printf("Seleccione una opcion (1-3): ");
+    printf("Seleccione una opcion (1-6): ");
     scanf("%d", &opcion);
     return opcion;
 }
@@ -104,6 +107,79 @@ void JugarColor(int *saldo) {
     }
 }
 
+void JugarParidad(int *saldo) {
+    int apuesta = PedirApuesta(*saldo);
+    int paridadElegida;
+
+    do {
+        printf("Elija paridad (1: Par / 2: Impar): ");
+        scanf("%d", &paridadElegida);
+        if (paridadElegida != 1 && paridadElegida != 2) {
+            printf("Error: Ingrese 1 para Par o 2 para Impar.\n");
+        }
+    } while (paridadElegida != 1 && paridadElegida != 2);
+
+    int numeroSalio = GirarRuleta();
+    printf("-> Salio el numero: %d (Color: %c)\n", numeroSalio, COLORES[numeroSalio]);
+
+    if (numeroSalio != 0 && ((paridadElegida == 1 && numeroSalio % 2 == 0) || (paridadElegida == 2 && numeroSalio % 2 != 0))) {
+        printf("¡ACERTASTE LA PARIDAD! Ganaste $%d\n", apuesta);
+        *saldo += apuesta;
+    } else {
+        printf("Paridad incorrecta (o salio el 0). Perdiste $%d\n", apuesta);
+        *saldo -= apuesta;
+    }
+}
+
+void JugarFaltaPasa(int *saldo) {
+    int apuesta = PedirApuesta(*saldo);
+    int rangoElegido;
+
+    do {
+        printf("Elija rango (1: Falta [1-18] / 2: Pasa [19-36]): ");
+        scanf("%d", &rangoElegido);
+        if (rangoElegido != 1 && rangoElegido != 2) {
+            printf("Error: Ingrese 1 para Falta o 2 para Pasa.\n");
+        }
+    } while (rangoElegido != 1 && rangoElegido != 2);
+
+    int numeroSalio = GirarRuleta();
+    printf("-> Salio el numero: %d (Color: %c)\n", numeroSalio, COLORES[numeroSalio]);
+
+    if (numeroSalio != 0 && ((rangoElegido == 1 && numeroSalio >= 1 && numeroSalio <= 18) || (rangoElegido == 2 && numeroSalio >= 19 && numeroSalio <= 36))) {
+        printf("¡ACERTASTE EL RANGO! Ganaste $%d\n", apuesta);
+        *saldo += apuesta;
+    } else {
+        printf("Rango incorrecto (o salio el 0). Perdiste $%d\n", apuesta);
+        *saldo -= apuesta;
+    }
+}
+
+void JugarDocenas(int *saldo) {
+    int apuesta = PedirApuesta(*saldo);
+    int docenaElegida;
+
+    do {
+        printf("Elija la docena (1: 1-12 / 2: 13-24 / 3: 25-36): ");
+        scanf("%d", &docenaElegida);
+        if (docenaElegida < 1 || docenaElegida > 3) {
+            printf("Error: Ingrese un numero entre 1 y 3.\n");
+        }
+    } while (docenaElegida < 1 || docenaElegida > 3);
+
+    int numeroSalio = GirarRuleta();
+    printf("-> Salio el numero: %d (Color: %c)\n", numeroSalio, COLORES[numeroSalio]);
+
+    if (numeroSalio != 0 && ((docenaElegida == 1 && numeroSalio >= 1 && numeroSalio <= 12) || (docenaElegida == 2 && numeroSalio >= 13 && numeroSalio <= 24) || (docenaElegida == 3 && numeroSalio >= 25 && numeroSalio <= 36))) {
+        int premio = apuesta * 2;
+        printf("¡ACERTASTE LA DOCENA! Ganaste $%d\n", premio);
+        *saldo += premio;
+    } else {
+        printf("Docena incorrecta (o salio el 0). Perdiste $%d\n", apuesta);
+        *saldo -= apuesta;
+    }
+}
+
 
 int main(void) {
     int saldo = 1000; // Saldo de prueba
@@ -126,13 +202,22 @@ int main(void) {
                 JugarColor(&saldo);
                 break;
             case 3:
-                printf("\nTe retiras de la mesa con: $%d\n", saldo);
+                JugarParidad(&saldo);
+                break;
+            case 4:
+                JugarFaltaPasa(&saldo);
+                break;
+            case 5:
+                JugarDocenas(&saldo);
+                break;
+            case 6:
+                printf("Saliendo de la Ruleta. Te retiras con: $%d\n", saldo);
                 break;
             default:
                 printf("Opcion invalida. Intente de nuevo.\n");
                 break;
         }
-    } while (opcion != 3);
+    } while (opcion != 6);
 
     return 0;
 }

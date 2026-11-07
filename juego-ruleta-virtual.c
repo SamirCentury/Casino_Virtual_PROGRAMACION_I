@@ -1,9 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include "ruleta.h"
 
-#define NUM_COLORES 37
-#define MIN_APUESTA 500.0f
+//#include "main.h"
 
 // Vector de colores oficial de la Ruleta Europea
 // Casilla 0: 'V' (Verde) | 18 casillas 'R' (Rojo) | 18 casillas 'N' (Negro)

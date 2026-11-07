@@ -3,6 +3,7 @@
 #include <time.h>
 
 #define NUM_COLORES 37
+#define MIN_APUESTA 500.0f
 
 // Vector de colores oficial de la Ruleta Europea
 // Casilla 0: 'V' (Verde) | 18 casillas 'R' (Rojo) | 18 casillas 'N' (Negro)
@@ -60,21 +61,29 @@ void AnimarGiroRuleta(int numeroSalio, char colorSalio) {
 
 int MostrarMenuRuleta(void) {
     int opcion;
-    printf("\n==========================================\n");
-    printf("         MESA DE RULETA EUROPEA           \n");
-    printf("==========================================\n");
-    printf("1. Apostar a Pleno (Numero exacto)      [Paga 35:1]\n");
-    printf("2. Apostar a Color (Rojo o Negro)       [Paga 1:1]\n");
-    printf("3. Apostar Par o Impar                  [Paga 1:1]\n");
-    printf("4. Apostar Falta (1-18) / Pasa (19-36)  [Paga 1:1]\n");
-    printf("5. Apostar Docenas (1-12, 13-24, 25-36) [Paga 2:1]\n");
-    printf("6. Salir de la Ruleta\n");
-    printf("==========================================\n");
-    printf("Seleccione una opcion (1-6): ");
-    scanf("%d", &opcion);
-    if (opcion < 1 || opcion > 6) {
-        printf("Ingrese una opcion valida (1 a 6)\n");
-    }
+    do {
+        printf("\n==========================================\n");
+        printf("         MESA DE RULETA EUROPEA           \n");
+        printf("==========================================\n");
+        printf("1. Apostar a Pleno (Numero exacto)      [Paga 35:1]\n");
+        printf("2. Apostar a Color (Rojo o Negro)       [Paga 1:1]\n");
+        printf("3. Apostar Par o Impar                  [Paga 1:1]\n");
+        printf("4. Apostar Falta (1-18) / Pasa (19-36)  [Paga 1:1]\n");
+        printf("5. Apostar Docenas (1-12, 13-24, 25-36) [Paga 2:1]\n");
+        printf("6. Salir de la Ruleta\n");
+        printf("==========================================\n");
+        printf("Seleccione una opcion (1-6): ");
+
+        // Verifica si scanf no pudo leer un numero
+        if (scanf("%d", &opcion) != 1) {
+            // Entra aca si pusieron una letra
+            printf("Entrada invalida. Por favor, ingrese un numero entre 1 y 6\n");
+            while (getchar() != '\n'); // Limpia la letra que rompió el programa
+            opcion = 0; // Fuerza a que repita el bucle
+        } else if (opcion < 1 || opcion > 6) {
+            printf("Ingrese una opcion valida (1 a 6)\n");
+        }
+    } while (opcion < 1 || opcion > 6);
     return opcion;
 }
 
@@ -82,14 +91,21 @@ float PedirApuesta(float saldoActual) {
     float monto;
     do {
         printf("Saldo disponible: $%.2f\n", saldoActual);
-        printf("Ingrese monto a apostar: ");
-        scanf("%f", &monto);
-        if (monto <= 0) {
-            printf("La apuesta debe ser mayor a 0\n");
-        } else if (monto > saldoActual) {
+        printf("Ingrese monto a apostar (minimo $%0.2f): ", MIN_APUESTA);
+        
+        if (scanf("%f", &monto) != 1) {
+            printf("Entrada invalida\n");
+            while (getchar() != '\n'); // Limpia la letra que rompio el programa
+            monto = 0; 
+        }
+        else if (monto < MIN_APUESTA) {
+            printf("La apuesta debe ser mayor o igual a $%0.2f\n", MIN_APUESTA);
+        }
+        else if (monto > saldoActual) {
             printf("No puedes apostar mas fichas de las que tienes\n");
         }
-    } while (monto <= 0 || monto > saldoActual);
+
+    } while (monto < MIN_APUESTA || monto > saldoActual);
     return monto;
 }
 
@@ -97,13 +113,18 @@ int PedirNumeroPleno(float *saldo) {
     int numeroElegido;
 
     do {
-        printf("Saldo en mesa: $%.2f\n", *saldo);
         printf("Elija un numero (0 al 36): ");
-        scanf("%d", &numeroElegido);
-        if (numeroElegido < 0 || numeroElegido > 36) {
+
+        if (scanf("%d", &numeroElegido) != 1) {
+            printf("Entrada invalida. Por favor, ingrese un numero\n");
+            while (getchar() != '\n'); // Limpia la letra que rompio el programa
+            numeroElegido = -1; 
+        }
+        else if (numeroElegido < 0 || numeroElegido > 36) {
             printf("Numero fuera de rango\n");
         }
     } while (numeroElegido < 0 || numeroElegido > 36);
+
     return numeroElegido;
 }
 
@@ -111,14 +132,17 @@ char PedirColor(float *saldo) {
     char colorElegido;
 
     do {
-        printf("Saldo en mesa: $%.2f\n", *saldo);
+        //printf("Saldo en mesa: $%.2f\n", *saldo);
         printf("Elija color ('R' para Rojo / 'N' para Negro): ");
         scanf(" %c", &colorElegido);
+
+        // Verifica que el usuario ingrese R o N (mayuscula o minuscula)
         if (colorElegido != 'r' && colorElegido != 'R' && colorElegido != 'n' && colorElegido != 'N') {
             printf("Ingrese solo 'R' o 'N'.\n");
         }
     } while (colorElegido != 'r' && colorElegido != 'R' && colorElegido != 'n' && colorElegido != 'N');
 
+    // Estandariza a mayusculas para facilitar las comprobaciones
     if (colorElegido == 'r') {
         colorElegido = 'R';
     } else if (colorElegido == 'n') {
@@ -131,10 +155,15 @@ int PedirParidad(float *saldo) {
     int paridadElegida;
 
     do {
-        printf("Saldo en mesa: $%.2f\n", *saldo);
+        //printf("Saldo en mesa: $%.2f\n", *saldo);
         printf("Elija paridad (1: Par / 2: Impar): ");
-        scanf("%d", &paridadElegida);
-        if (paridadElegida != 1 && paridadElegida != 2) {
+        
+        if (scanf("%d", &paridadElegida) != 1) {
+            printf("Entrada invalida. Por favor, ingrese un numero\n");
+            while (getchar() != '\n'); // Limpia la letra que rompio el programa
+            paridadElegida = 0; 
+        }
+        else if (paridadElegida != 1 && paridadElegida != 2) {
             printf("Ingrese 1 para Par o 2 para Impar\n");
         }
     } while (paridadElegida != 1 && paridadElegida != 2);
@@ -145,10 +174,14 @@ int PedirFaltaPasa(float *saldo) {
     int rangoElegido;
 
     do {
-        printf("Saldo en mesa: $%.2f\n", *saldo);
+        //printf("Saldo en mesa: $%.2f\n", *saldo);
         printf("Elija rango (1: Falta [1-18] / 2: Pasa [19-36]): ");
-        scanf("%d", &rangoElegido);
-        if (rangoElegido != 1 && rangoElegido != 2) {
+        if (scanf("%d", &rangoElegido) != 1) {
+            printf("Entrada invalida. Por favor, ingrese un numero\n");
+            while (getchar() != '\n'); // Limpia la letra que rompio el programa
+            rangoElegido = 0;
+        }
+        else if (rangoElegido != 1 && rangoElegido != 2) {
             printf("Ingrese 1 para Falta o 2 para Pasa\n");
         }
     } while (rangoElegido != 1 && rangoElegido != 2);
@@ -159,10 +192,14 @@ int PedirDocena(float *saldo) {
     int docenaElegida;
 
     do {
-        printf("Saldo en mesa: $%.2f\n", *saldo);
+        //printf("Saldo en mesa: $%.2f\n", *saldo);
         printf("Elija la docena (1: 1-12 / 2: 13-24 / 3: 25-36): ");
-        scanf("%d", &docenaElegida);
-        if (docenaElegida < 1 || docenaElegida > 3) {
+        if (scanf("%d", &docenaElegida) != 1) {
+            printf("Entrada invalida. Por favor, ingrese un numero\n");
+            while (getchar() != '\n'); // Limpia la letra que rompio el programa
+            docenaElegida = 0;
+        }
+        else if (docenaElegida < 1 || docenaElegida > 3) {
             printf("Ingrese un numero entre 1 y 3\n");
         }
     } while (docenaElegida < 1 || docenaElegida > 3);
@@ -171,10 +208,11 @@ int PedirDocena(float *saldo) {
 
 
 void ResolverRonda(int tipo, float monto, float *saldo) {
+    // Variables para guardar lo que eligio el usuario segun el tipo de apuesta
     int numElegido = -1, paridadElegida = 0, rangoElegido = 0, docenaElegida = 0;
     char colElegido = ' ';
 
-    // 1. Capturar pronóstico del jugador
+    // 1. Llama a la funcion correspondiente para pedirle el pronostico al jugador
     switch (tipo) {
         case 1:
             numElegido = PedirNumeroPleno(saldo);
@@ -193,17 +231,17 @@ void ResolverRonda(int tipo, float monto, float *saldo) {
             break;
     }
 
-    // 2. Giro y resultado
+    // 2. Genera el numero ganador al azar y busca de que color es
     int numeroSalio = rand() % NUM_COLORES;
     char colSalio = COLORES[numeroSalio];
     AnimarGiroRuleta(numeroSalio, colSalio);
 
-    // 3. Evaluación de premios según la apuesta
+    // 3. Evalua si el jugador gano o perdio segun el tipo de apuesta que hizo
     switch (tipo) {
         case 1: // Pleno (35:1)
             if (numElegido == numeroSalio) {
                 float premio = monto * 35;
-                printf("¡ACERTASTE EL PLENO! Ganaste $%.2f\n", premio);
+                printf("ACERTASTE EL PLENO! Ganaste $%.2f\n", premio);
                 *saldo += premio;
             } else {
                 printf("No hubo suerte. Perdiste $%.2f\n", monto);
@@ -213,7 +251,7 @@ void ResolverRonda(int tipo, float monto, float *saldo) {
 
         case 2: // Color (1:1) - Casilla 0 pierde
             if (numeroSalio != 0 && colElegido == colSalio) {
-                printf("¡ACERTASTE EL COLOR! Ganaste $%.2f\n", monto);
+                printf("ACERTASTE EL COLOR! Ganaste $%.2f\n", monto);
                 *saldo += monto;
             } else {
                 printf("Color incorrecto (o salio el 0). Perdiste $%.2f\n", monto);
@@ -225,7 +263,7 @@ void ResolverRonda(int tipo, float monto, float *saldo) {
             if (numeroSalio != 0 && (
                 (paridadElegida == 1 && numeroSalio % 2 == 0) ||
                 (paridadElegida == 2 && numeroSalio % 2 != 0))) {
-                printf("¡ACERTASTE LA PARIDAD! Ganaste $%.2f\n", monto);
+                printf("ACERTASTE LA PARIDAD! Ganaste $%.2f\n", monto);
                 *saldo += monto;
             } else {
                 printf("Paridad incorrecta (o salio el 0). Perdiste $%.2f\n", monto);
@@ -237,7 +275,7 @@ void ResolverRonda(int tipo, float monto, float *saldo) {
             if (numeroSalio != 0 && (
                 (rangoElegido == 1 && numeroSalio >= 1 && numeroSalio <= 18) ||
                 (rangoElegido == 2 && numeroSalio >= 19 && numeroSalio <= 36))) {
-                printf("¡ACERTASTE EL RANGO! Ganaste $%.2f\n", monto);
+                printf("ACERTASTE EL RANGO! Ganaste $%.2f\n", monto);
                 *saldo += monto;
             } else {
                 printf("Rango incorrecto (o salio el 0). Perdiste $%.2f\n", monto);
@@ -251,7 +289,7 @@ void ResolverRonda(int tipo, float monto, float *saldo) {
                 (docenaElegida == 2 && numeroSalio >= 13 && numeroSalio <= 24) ||
                 (docenaElegida == 3 && numeroSalio >= 25 && numeroSalio <= 36))) {
                 float premio = monto * 2;
-                printf("¡ACERTASTE LA DOCENA! Ganaste $%.2f\n", premio);
+                printf("ACERTASTE LA DOCENA! Ganaste $%.2f\n", premio);
                 *saldo += premio;
             } else {
                 printf("Docena incorrecta (o salio el 0). Perdiste $%.2f\n", monto);
@@ -262,15 +300,17 @@ void ResolverRonda(int tipo, float monto, float *saldo) {
 }
 
 void JugarRuleta(float *saldo) {
+
     char seguir = 'S';
 
     MostrarBienvenida();
 
-    while (*saldo > 0 && (seguir == 'S' || seguir == 's')) {
+    // El juego continua mientras el jugador tenga el saldo minimo y quiera seguir
+    while (*saldo >= MIN_APUESTA && (seguir == 'S' || seguir == 's')) {
         DibujarPanoRuleta();
         int tipo = MostrarMenuRuleta();
 
-        if (tipo == 6) {
+        if (tipo == 6) { // Opcion 6 es para salir del juego
             break;
         }
 
@@ -278,25 +318,35 @@ void JugarRuleta(float *saldo) {
 
         ResolverRonda(tipo, monto, saldo);
 
-        if (*saldo > 0) {
-            printf("\n¿Desea jugar otra ronda en la Ruleta? (S/N): ");
-            scanf(" %c", &seguir);
+        // Si le queda dinero suficiente, le pregunta si quiere otra ronda
+        if (*saldo >= MIN_APUESTA) {
+            do {
+                printf("\nDesea jugar otra ronda en la Ruleta? (S/N): ");
+                scanf(" %c", &seguir);
+                
+                // Avisa si pone cualquier otra letra que no sea S o N
+                if (seguir != 's' && seguir != 'S' && seguir != 'n' && seguir != 'N') {
+                    printf("Opcion invalida. Ingrese 'S' para si, o 'N' para no.\n");
+                }
+            } while (seguir != 's' && seguir != 'S' && seguir != 'n' && seguir != 'N');
+            
         } else {
-            printf("\nTe quedaste sin fichas en la mesa\n");
+            // Si el saldo baja del minimo, lo echa de la mesa
+            printf("\nTe quedaste sin fichas suficientes en la mesa\n");
             seguir = 'N';
         }
     }
 
     printf("\n==========================================\n");
-    printf(" Te retiras de la Ruleta con: $%.2f\n", (float)*saldo);
+    printf(" Te retiras de la Ruleta con: $%.2f\n", *saldo);
     printf("==========================================\n");
 }
 
 int main(void) {
-    float saldo = 1000.0f; // Saldo de prueba
-    srand(time(NULL));
+    float saldo = 2000.0f; // Saldo de prueba
+    srand((unsigned int)time(NULL));
 
-    JugarRuleta(&saldo);
+    JugarRuleta(&saldo); // Llama a la funcion principal que arranca el juego
 
     return 0;
 }

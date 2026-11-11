@@ -1,29 +1,19 @@
 #ifndef POKER_H
 #define POKER_H
 
+#include "main.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <locale.h>
 
-// ============================================================================
-// ESTRUCTURAS Y CONSTANTES GLOBALES
-// ============================================================================
-// Declaración adelantada para que poker.h reconozca la estructura Usuario de TRAGAMONEDAS.h
-typedef struct Usuario{
-    char usuario[50];  //Cadena de caracteres para el nombre de usuario
-    char clave[50];    //Cadena de caracteres para la contrase�a
-    int edad;          //Edad del usuario
-    float saldo;       //Diinero disponible en la cuenta
-    bool activo;       //Bandera: true = casillero ocupado, false = casillero libre
-    bool continuar;   //Bandera para controlar el flujo de los juegos (true = seguir jugando, false = salir)
-    float gananciaAdmin; //Rendimiento comercial: cuanto le gano/perdio el casino al usuario
-}Usuario;
+
 
 typedef struct {
     int valor; // 1 (As), 2 al 10, 11 (J), 12 (Q), 13 (K)
     int palo;  // 0: Corazones, 1: Diamantes, 2: Treboles, 3: Picas
-} Carta;
+} Carta_t;
 
 // Variable global externa de la caja del casino
 extern float cajaCasino;
@@ -37,39 +27,38 @@ typedef enum{
     OPC_JUGAR_POKER = 1,
     OPC_REGLAS_POKER,
     OPC_SALIR_MENU_POKER
-} OpcionesPoker;
+} OpcionesPoker_t;
 
 // ============================================================================
-// PROTOTIPOS DE FUNCIONES - FLUJO DE JUEGO Y MEN�S
+// PROTOTIPOS DE FUNCIONES - FLUJO DE JUEGO Y MENUS
 // ============================================================================
 
-void MenuJuegoPoker(Usuario  *usuario);
+void MenuJuegoPoker(Usuario_t  *usuario);
 void ReglasDelPoker(void);
-void JugarPartidaPoker(Usuario *usuario);
+void JugarPartidaPoker(Usuario_t *usuario);
 float RealizarApuesta(float *saldo, float apuestaMinima);
 
 // ============================================================================
-// PROTOTIPOS DE FUNCIONES - GESTI�N DEL MAZO Y CARTAS
+// PROTOTIPOS DE FUNCIONES - GESTION DEL MAZO Y CARTAS
 // ============================================================================
 
-void InicializarMazo(Carta mazo[]);
-void MezclarMazo(Carta mazo[]);
-void ImprimirCarta(Carta c);
-void MostrarMano(Carta mano[], int cantidad, const char *nombreJugador);
-void RepartirMano(Carta mazo[], Carta mano[], int *posicionMazo);
+void InicializarMazo(Carta_t mazo[]);
+void MezclarMazo(Carta_t mazo[]);
+void MostrarMano(Carta_t mano[], int cantidad, const char *nombreJugador);
+void RepartirMano(Carta_t mazo[], Carta_t mano[], int *posicionMazo);
 
 // ============================================================================
-// PROTOTIPOS DE FUNCIONES - L�GICA Y EVALUACI�N DE MANOS
+// PROTOTIPOS DE FUNCIONES - LOGICA Y EVALUACION DE MANOS
 // ============================================================================
 
-void DescartarJugador(Carta mano[], Carta mazo[], int *posicionMazo);
-void DescartarMaquina(Carta mano[], Carta mazo[], int *posicionMazo);
-int EvaluarMano(Carta mano[]);
-void DeterminarGanador(Carta manoJugador[], Carta manoMaquina[]);
-void OrdenarMano(Carta mano[]);
-int DesempatarManos(Carta manoJugador[], Carta manoMaquina[]);
+void DescartarJugador(Carta_t mano[], Carta_t mazo[], int *posicionMazo);
+void DescartarMaquina(Carta_t mano[], Carta_t mazo[], int *posicionMazo);
+int EvaluarMano(Carta_t mano[]);
+void DeterminarGanador(Carta_t manoJugador[], Carta_t manoMaquina[]);
+void OrdenarMano(Carta_t mano[]);
+int DesempatarManos(Carta_t manoJugador[], Carta_t manoMaquina[]);
 int ObtenerValorVirtual(int valor);
-int ObtenerValorCombinacion(Carta mano[], int jerarquia);
+int ObtenerValorCombinacion(Carta_t mano[], int jerarquia);
 void ActualizarCajaCasino(float *cajaCasa, float montoApostado, int resultado);
 
 // ============================================================================

@@ -11,8 +11,6 @@ const char *NOMBRES_JUGADAS[] = {
     "Escalera", "Color", "Full House", "Poker", "Escalera de Color"
 };
 
-//Variable global que acumula las ganancias o perdidas del casino
-float cajaCasino = 50000.0f;
 
 
 //=============================================================
@@ -20,21 +18,24 @@ float cajaCasino = 50000.0f;
 //=============================================================
 
 //Menu completo del poker
-void MenuJuegoPoker(Usuario *usuario){
+void MenuJuegoPoker(Usuario_t *usuario){
     int opcionSubMenu = 0;
-    int leidos = 0;       //Almacena la validacion del scanf (1 si leyo entero, 0 si fallo)
-
     do{
         system("clear || cls");
-        printf("\n=======================================\n");
-        printf("           SALON DE POKER - CASINO       \n");
-        printf("\n=======================================\n");
-        printf("Saldo disponible: $%.2f\n",usuario->saldo); //"->" usamos el simbolo de flecha para acceder a los miembros de la estructura a traves del puntero y para ahorrarnos escribir "(*usuario).saldo"
-        printf("%d. Jugar.\n", OPC_JUGAR_POKER);
-        printf("%d. Reglas.\n", OPC_REGLAS_POKER);
-        printf("%d. Salir.\n", OPC_SALIR_MENU_POKER);
-        printf("\n=======================================\n");
-        printf("Seleccione una opcion: ");
+        
+       // Cabecera estilizada del Salón de Póker (Usando macros de color)
+        printf("\n" T_AMARILLO "╔═════════════════════════════════════════════════╗\n");
+        printf("║         " T_ROJO " ♠ ♥ SALON DE POKER VIP ♦ ♣ " T_AMARILLO "            ║\n");
+        printf("╠═════════════════════════════════════════════════╣" T_RESET "\n");
+        printf(T_AMARILLO "║ " T_VERDE "Balance del Jugador : " T_AMARILLO "$%-22.2f " T_AMARILLO "  ║\n", usuario->saldo); 
+        printf(T_AMARILLO "╠═════════════════════════════════════════════════╣" T_RESET "\n");
+        printf(T_AMARILLO "║                                                 ║\n");
+        printf("║   " T_CIAN "[%d]" T_BLANCO " 🎰 ENTRAR A LA MESA (JUGAR)               " T_AMARILLO "║\n", OPC_JUGAR_POKER);
+        printf("║   " T_CIAN "[%d]" T_BLANCO " 📜 CONSULTAR REGLAS                       " T_AMARILLO "║\n", OPC_REGLAS_POKER);
+        printf("║   " T_CIAN "[%d]" T_ROJO " 🚪 RETIRARSE DEL SALON                    " T_AMARILLO "║\n", OPC_SALIR_MENU_POKER);
+        printf("║                                                 ║\n");
+        printf("╚═════════════════════════════════════════════════╝" T_RESET "\n");
+        printf(" Ingrese su opción: ");
 
         if(!LeerEnteroValido(&opcionSubMenu)){
             opcionSubMenu = 0; //Forzamos 0 para ir al default del switch
@@ -42,48 +43,61 @@ void MenuJuegoPoker(Usuario *usuario){
 
         switch(opcionSubMenu){
         case OPC_JUGAR_POKER:
-            JugarPartidaPoker(usuario); //le pasamos el puntero completo al usuario
+            JugarPartidaPoker(usuario);
             break;
         case OPC_REGLAS_POKER:
             ReglasDelPoker();
             break;
         case OPC_SALIR_MENU_POKER:
-            printf("\nSaliendo del modulo de Poker...\n");
+            printf("\n\033[1;32mSaliendo del modulo de Poker...\033[0m\n");
+            Sleep(1000);
             break;
         default:
-            printf("\n[x] Opcion invalida. Por favor, ingrese un numero valido (1, 2 o 3).\n");
+            printf("\n\033[1;31m[X] Opcion invalida. Por favor, ingrese un numero valido (1, 2 o 3).\033[0m\n");
+            printf("Presione ENTER para continuar...");
             break;
 
             }
       }while(opcionSubMenu != OPC_SALIR_MENU_POKER);
 }
 
+// ============================================================================
+// REGLAS DEL PÓKER (Versión Estilizada Pro con tus Macros)
+// ============================================================================
 void ReglasDelPoker(){
-    printf("\n=====================================================\n");
-    printf("                     REGLAS DEL POKER                  \n");
-    printf("\n=====================================================\n");
-    printf("1. Cada jugador recibe 5 cartas de un mazo de 52.\n");
-    printf("2. Podes cambiar de 0 a 5 cartas en la fase de descarte.\n");
-    printf("3. Gana la mano quien forme la combinacion de mayor jerarquia:\n");
-    printf("      - Escalera Real      (10, J, Q, K, As del mismo palo)\n");
-    printf("      - Escalera de Color  (5 cartas consecutivas del mismo palo)\n");
-    printf("      - Poker             (4 cartas con el mismo valor)\n");
-    printf("      - Full House        (Un Trio + Un Par)\n");
-    printf("      - Color             (5 cartas del mismo palo)\n");
-    printf("      - Escalera          (5 cartas de valores consecutivos)\n");
-    printf("      - Trio              (3 cartas con el mismo valor)\n");
-    printf("      - Doble Par         (Dos pares de cartas iguales)\n");
-    printf("      - Par               (Dos cartas con el mismo valor)\n");
-    printf("      - Carta Alta        (Valor de la carta mas alta)\n");
-    printf("\n=====================================================\n");
-    printf("Presiona cualquier tecla para volver al menu...\n");
-    getchar();
+    system("clear || cls");
+    
+    printf("\n" T_AMARILLO "╔════════════════════════════════════════════════════════════════╗\n");
+    printf("║          " T_ROJO "♥ ♦ ♣ ♠" T_AMARILLO " REGLAS DEL 5 CARD DRAW " T_ROJO "♠ ♣ ♦ ♥" T_AMARILLO "                ║\n");
+    printf("╠════════════════════════════════════════════════════════════════╣\n");
+    printf("║                                                                ║\n");
+    printf("║  " T_CIAN "1." T_BLANCO " Cada jugador recibe 5 cartas de un mazo de 52.             ║\n");
+    printf("║  " T_CIAN "2." T_BLANCO " Podes cambiar de 0 a 5 cartas en la fase de descarte.      ║\n");
+    printf("║  " T_CIAN "3." T_BLANCO " Gana la mano quien forme la combinacion de mayor jerarquia:║\n");
+    printf("║                                                                ║\n");
+    printf("║     - " T_VERDE "Escalera Real" T_BLANCO "       (10, J, Q, K, As del mismo palo)     ║\n");
+    printf("║     - " T_VERDE "Escalera de Color" T_BLANCO "   (5 cartas consecutivas del mismo)    ║\n");
+    printf("║     - " T_VERDE "Poker" T_BLANCO "               (4 cartas con el mismo valor)        ║\n");
+    printf("║     - " T_VERDE "Full House" T_BLANCO "          (Un Trio + Un Par)                   ║\n");
+    printf("║     - " T_VERDE "Color" T_BLANCO "               (5 cartas del mismo palo)            ║\n");
+    printf("║     - " T_VERDE "Escalera" T_BLANCO "           (5 cartas de valores consecutivos)    ║\n");
+    printf("║     - " T_VERDE "Trio" T_BLANCO "               (3 cartas con el mismo valor)         ║\n");
+    printf("║     - " T_VERDE "Doble Par" T_BLANCO "          (Dos pares de cartas iguales)         ║\n");
+    printf("║     - " T_VERDE "Par" T_BLANCO "               (Dos cartas con el mismo valor)        ║\n");
+    printf("║     - " T_VERDE "Carta Alta" T_BLANCO "          (Valor de la carta mas alta)         ║\n");
+    printf("║                                                                ║\n");
+    printf("╚════════════════════════════════════════════════════════════════╝\n" T_RESET);
+    
+    printf("\n        " T_CIAN ">>>> PRESIONA <<ENTER>> PARA VOLVER AL MENU <<<<\n" T_RESET);
+    
+    while(getchar() != '\n'); // Limpia el buffer de forma segura
+    getchar(); // Espera a que el usuario presione Enter
 }
 
 
 
 // Carga las 52 cartas del mazo en orden (4 palos x 13 valores)
-void InicializarMazo(Carta mazo[]){
+void InicializarMazo(Carta_t mazo[]){
     int posicion = 0;
 
     //Bucle para recorrer los 4 palos
@@ -98,51 +112,96 @@ void InicializarMazo(Carta mazo[]){
 }
 
 // Mezcla las 52 cartas cambiando las posiciones al azar
-void MezclarMazo(Carta mazo[]){
+void MezclarMazo(Carta_t mazo[]){
     for(int i=0; i<52; i++){
             //Genera un indice aleatorio entre 0 y 51
             int r = rand() % 52;
 
 
             //Intercambio clasico de variables usando una auxiliar
-            Carta temp = mazo[i];
+            Carta_t temp = mazo[i];
             mazo[i] = mazo[r];
             mazo[r] = temp;
         }
 }
 
-// Muestra una sola carta en pantalla con el formato adecuado (As, J, Q, K)
-void ImprimirCarta(Carta c){
-    if(c.valor == 1){
-        printf("As");
-    }else if (c.valor == 11){
-        printf("J");
-    }else if (c.valor == 12){
-        printf("Q");
-    }else if (c.valor == 13){
-        printf("K");
-    }else{
-        printf("%d",c.valor); // Para numeros entre 2 y 10
-    }
-
-    printf(" de %s",NOMBRES_PALOS[c.palo]);
-
-}
 
 //Imprime las cartas de la mano indicando el numero de seleccion [1] al [5]
-void MostrarMano(Carta mano[], int cantidad, const char *nombreJugador){
-    printf("\n--- Mano de %s ----\n", nombreJugador);
-    for(int i=0; i<cantidad; i++){
-        printf("[%d] ", i+1);
-        ImprimirCarta(mano[i]);
-        printf("\n");
+//Impresion de cartas con formato 3D y paño de casino
+void MostrarMano(Carta_t mano[], int cantidad, const char *nombreJugador){
+    //Palos Unicode con colores reales
+    const char *simbolosPalos[] = {"♥", "♦", "♣", "♠"};
+
+    // Encabezado estilizado de la mesa
+    printf("\n" T_AMARILLO "═══════════════════════════════════════════════════════════" T_RESET "\n");
+    printf("  " T_VERDE "MESA VIP: Mano de %-15s" T_RESET "                 \n", nombreJugador);
+    printf(T_AMARILLO "═══════════════════════════════════════════════════════════" T_RESET "\n\n");
+    
+   // 1. Números de selección (Índices para el descarte)
+    for(int i = 0; i < cantidad; i++){
+        printf("   " T_CIAN "[%d]" T_RESET "     ", i + 1);
     }
-    printf("--------------------------------\n");
+    printf("\n");
+
+    // 2. Borde Superior de la carta (Enmarcado en Amarillo VIP)
+    for(int i = 0; i < cantidad; i++) {
+        printf(T_AMARILLO "╔═══════╗" T_RESET " ");
+    }
+    printf("\n");
+
+    // 3. Esquina Superior Izquierda (Número/Figura)
+    for(int i = 0; i < cantidad; i++){
+        int esRojo = (mano[i].palo == 0 || mano[i].palo == 1);
+        char *col = esRojo ? T_ROJO : T_BLANCO;
+
+        char valStr[3];
+        if(mano[i].valor == 1) strcpy(valStr, "A ");
+        else if(mano[i].valor == 11) strcpy(valStr, "J ");
+        else if(mano[i].valor == 12) strcpy(valStr, "Q ");
+        else if(mano[i].valor == 13) strcpy(valStr, "K ");
+        else sprintf(valStr, "%-2d", mano[i].valor);
+
+        printf(T_AMARILLO "║" T_RESET " %s%-2s" T_RESET "    " T_AMARILLO "║" T_RESET " ", col, valStr);
+    }
+    printf("\n");
+
+    // 4. Centro de la Carta (Palo unicode gigante)
+    for(int i = 0; i < cantidad; i++){
+        int esRojo = (mano[i].palo == 0 || mano[i].palo == 1);
+        char *col = esRojo ? T_ROJO : T_BLANCO;
+
+        printf(T_AMARILLO "║" T_RESET "   %s%s" T_RESET "   " T_AMARILLO "║" T_RESET " ", col, simbolosPalos[mano[i].palo]);
+    }
+    printf("\n");
+
+    // 5. Esquina Inferior Derecha (Número/Figura invertido)
+    for(int i = 0; i < cantidad; i++){
+        int esRojo = (mano[i].palo == 0 || mano[i].palo == 1);
+        char *col = esRojo ? T_ROJO : T_BLANCO;
+
+        char valStr[3];
+        if(mano[i].valor == 1) strcpy(valStr, " A");
+        else if(mano[i].valor == 11) strcpy(valStr, " J");
+        else if(mano[i].valor == 12) strcpy(valStr, " Q");
+        else if(mano[i].valor == 13) strcpy(valStr, " K");
+        else sprintf(valStr, "%2d", mano[i].valor);
+
+        printf(T_AMARILLO "║" T_RESET "    %s%2s" T_RESET " " T_AMARILLO "║" T_RESET " ", col, valStr);
+    }
+    printf("\n");
+
+    // 6. Borde Inferior de la Carta
+    for(int i = 0; i < cantidad; i++) {
+        printf(T_AMARILLO "╚═══════╝" T_RESET " ");
+    }
+    printf("\n" T_AMARILLO "───────────────────────────────────────────────────────────" T_RESET "\n");
 }
+
+
 
 //Reparte 5 cartas seguidas sacandolas del mazo activo
 //Subproceso para repartir 5 cartas a una mano
-void RepartirMano(Carta mazo[], Carta mano[], int *posicionMazo){
+void RepartirMano(Carta_t mazo[], Carta_t mano[], int *posicionMazo){
     for (int i=0;i<5;i++){
         //Le asignamos la carta actual del mazo a la mano
         mano[i] = mazo[*posicionMazo];
@@ -156,42 +215,51 @@ void RepartirMano(Carta mazo[], Carta mano[], int *posicionMazo){
         //incrementamos la posicionpara que la siguiente carta salga de mas abajo
 }
 //Permite al usuario seleccionar cuantas y cuales cartas reemplazar de su mano
-void DescartarJugador(Carta mano[], Carta mazo[], int *posicionMazo){
+void DescartarJugador(Carta_t mano[], Carta_t mazo[], int *posicionMazo){
     int cantidad, posicionCarta;
-    int leidos = 0;
-
     //Arreglo auxiliar para registrar posiciones (0 a 4) ya se marcaron para cambio
     //Inicializado en 0
 
     int posicionesCambiadas[5] = {0};
 
-    printf("\n==========================================\n");
-    printf("                  FASE DE DESCARTE          \n");
-    printf("\n==========================================\n");
+    printf("\n" T_CIAN "╔═══════════════════════════════════════════════════════════╗\n");
+    printf("║                 🂠 FASE DE DESCARTE Y CAMBIO               ║\n");
+    printf("╚═══════════════════════════════════════════════════════════╝" T_RESET "\n");
 
     do{
-        printf("¿Cuantas cartas queres cambiar? (0 a 5): ");
+        printf(T_BLANCO "¿Cuántas cartas querés cambiar? " T_AMARILLO "(0 a 5)" T_BLANCO ": " T_RESET);
 
         if(!LeerEnteroValido(&cantidad)){
             cantidad = -1;
         }
 
         if((cantidad < 0)||(cantidad > 5)){
-            printf("[x] Error: Ingrese un numero valido entre 0 y 5.\n");
+            printf(T_ROJO "[X] Error: Ingrese un número válido entre 0 y 5." T_RESET "\n");
         }
     }while ((cantidad < 0)||(cantidad > 5));
 
 
     if(cantidad == 0){
-        printf("Decidiste mantener toda tu mano intacta.\n");
+        printf("\n" T_VERDE "[✔] Decidiste mantener toda tu mano intacta. ¡Buena suerte!" T_RESET "\n");
+        Sleep(1000);
         return;
     }
 
+    //Si el usuario elige 5, cambiamos toda la mano de forma automatica de una vez
+    if(cantidad == 5){
+        for(int i=0; i<5; i++){
+            mano[i] = mazo[*posicionMazo];
+            (*posicionMazo)++;
+        }
+        printf("\n" T_VERDE "[✔] ¡Has descartado las 5 cartas! Nuevas cartas repartidas con éxito." T_RESET "\n");
+        Sleep(1000);
+        return;
+    }
 
-    //Preguntamos las posiciones
+    //Preguntamos las posiciones (solo si elige de 1 a 4)
     for (int i=0; i<cantidad; i++){
         do{
-            printf("Ingrese la posicion de la carta %d a cambiar (1 a 5): ", i+1);
+            printf(T_BLANCO "Ingrese la posición de la carta " T_CIAN "#%d" T_BLANCO " a cambiar " T_AMARILLO "(1 a 5)" T_BLANCO ": " T_RESET, i + 1);
 
             if(!LeerEnteroValido(&posicionCarta)){
                 posicionCarta = -1;
@@ -199,18 +267,18 @@ void DescartarJugador(Carta mano[], Carta mazo[], int *posicionMazo){
 
 
             if((posicionCarta < 1)||(posicionCarta > 5)){
-                printf("[x] Error: Carta invalida. Elija entre 1 y 5.\n");
+                printf(T_ROJO "[X] Error: Carta inválida. Elija entre 1 y 5." T_RESET "\n");
             }
              //Validacion: Control de duplicados (verifica si el casillero ya se uso)
              else if(posicionesCambiadas[posicionCarta - 1] == 1){
-                printf("[x] Error: Ya pediste cambiar la carta de la posicion %d. Elija otra posicion.\n", posicionCarta);
+                printf(T_ROJO "[X] Error: Ya pediste cambiar la carta de la posición %d. Elija otra." T_RESET "\n", posicionCarta);
                 posicionCarta = -1; // Forzamos repetir la consulta
              }
 
 
         }while((posicionCarta < 1)||(posicionCarta > 5));
 
-        // Marcamos la posici�n elegida como ocupada (se resta 1 por el �ndice 0 de C)
+        // Marcamos la posicion elegida como ocupada (se resta 1 por el indice 0 de C)
         posicionesCambiadas[posicionCarta - 1] = 1;
 
         // Reemplazamos la carta actual por la siguiente carta activa del mazo
@@ -220,15 +288,17 @@ void DescartarJugador(Carta mano[], Carta mazo[], int *posicionMazo){
         (*posicionMazo)++;
     }
 
-    printf("\n[!] Cartas reemplazadas con exito.\n");
+    printf("\n" T_VERDE "[✔] Cartas reemplazadas con éxito por el crupier." T_RESET "\n");
+    Sleep(1000);
 }
 
 //Prototipo para la rutina de descarte de la maquina
-void DescartarMaquina(Carta mano[], Carta mazo[], int *posicionMazo){
+void DescartarMaquina(Carta_t mano[], Carta_t mazo[], int *posicionMazo){
     int repetidas[5] = {0}; //Arreglo auxiliar para marcar que cartas guardar (1=guardar, 0=descartar)
     int descartes = 0;      //Contador de cuantas cartas va a cambiar
 
-    printf("\n[...] La maquina esta analizando su mano para descartar...\n");
+    printf("\n" T_AMARILLO "[...] La máquina está analizando su mano para descartar..." T_RESET "\n");
+    Sleep(2000);
 
     //Evaluacion de cartas repetidas
     //Comparamos cada carta de la mano contra todas las demas
@@ -252,11 +322,12 @@ void DescartarMaquina(Carta mano[], Carta mazo[], int *posicionMazo){
         }
     }
 
-    printf("-> La maquina descarto y cambio %d carta(s).\n",descartes);
+    printf(T_CIAN "-> La máquina descartó y cambió %d carta(s)." T_RESET "\n", descartes);
+    Sleep(2000);
 }
 
 //Analiza las 5 cartas de una mano y devuelve un puntaje de 0 a 8 segun la jugada
-int EvaluarMano(Carta mano[]){
+int EvaluarMano(Carta_t mano[]){
     int valores[14] = {0};   //Arreglo contador de frecuencias para los valores (1 al 13)
     int palos[4] = {0};      //Arreglo contador de frecuencias para los palos (0 al 3)
 
@@ -315,27 +386,27 @@ int EvaluarMano(Carta mano[]){
 }
 
 //Compara los puntajes de ambas manos e imprime el resultado final
-void DeterminarGanador(Carta manoJugador[], Carta manoMaquina[]){
+void DeterminarGanador(Carta_t manoJugador[], Carta_t manoMaquina[]){
     //Evaluamos los puntajes numericos
     int catJugador = EvaluarMano(manoJugador);
     int catMaquina = EvaluarMano(manoMaquina);
 
-    printf("\n=======================================\n");
-    printf("              RESULTADO FINAL            \n");
-    printf("\n=======================================\n");
+    printf("\n" T_AMARILLO "╔═══════════════════════════════════════════════════════════╗\n");
+    printf("║                🏆 RESULTADO FINAL - SHOWDOWN              ║\n");
+    printf("╚═══════════════════════════════════════════════════════════╝" T_RESET "\n");
 
     //Mostramos la mano de la maquina al final para transparencia
     MostrarMano(manoMaquina,5,"Maquina");
 
-    printf("\n -> Tu jugada: %s\n", NOMBRES_JUGADAS[catJugador]);
-    printf("-> Jugada de la maquina: %s\n", NOMBRES_JUGADAS[catMaquina]);
-    printf("---------------------------------------\n");
+    printf("\n  " T_CIAN "-> Tu jugada           : " T_AMARILLO "%s" T_RESET "\n", NOMBRES_JUGADAS[catJugador]);
+    printf("  " T_CIAN "-> Jugada de la máquina : " T_AMARILLO "%s" T_RESET "\n", NOMBRES_JUGADAS[catMaquina]);
+    printf(T_AMARILLO "───────────────────────────────────────────────────────────" T_RESET "\n");
 
     //Comparacion de resultados
     if(catJugador > catMaquina){
-        printf("¡FELICITACIONES! GANASTE LA MANO.\n");
+        printf("  " T_VERDE "¡FELICITACIONES! GANASTE LA MANO DE POKER. 🏆" T_RESET "\n");
     }else if (catMaquina > catJugador){
-        printf("LA MAQUINA GANA ESTA MANO.\n");
+        printf("  " T_ROJO "LA MÁQUINA GANA ESTA MANO." T_RESET "\n");
         //Tienen la misma categoria (ej: Trio vs trio, par vs par)
     }else{
         //Obtenemos el valor de la combinacion principal (ej: 10 para el trio del usuario vs 7 para la maquina)
@@ -343,32 +414,30 @@ void DeterminarGanador(Carta manoJugador[], Carta manoMaquina[]){
         int valCombMaquina = ObtenerValorCombinacion(manoMaquina, catMaquina);
 
         if(valCombJugador > valCombMaquina){
-            printf("¡FELICITACIONES! GANASTE LA MANO POR TENER MEJOR %s.\n",NOMBRES_JUGADAS[catJugador]);
+            printf("  " T_VERDE "¡FELICITACIONES! GANASTE POR TENER MEJOR %s. 🏆" T_RESET "\n", NOMBRES_JUGADAS[catJugador]);
         }else if(valCombMaquina > valCombJugador){
-            printf("LA MAQUINA GANA POR TENER MEJOR %s.\n",NOMBRES_JUGADAS[catMaquina]);
+            printf("  " T_ROJO "LA MÁQUINA GANA POR TENER MEJOR %s." T_RESET "\n", NOMBRES_JUGADAS[catMaquina]);
         }else{
             //Solo entra aca si la combinacion principal es identica (ej: par de 8 vs par de 8)
-            printf("[!] Ambos tienen %s de igual valor. Evaluando desempate por Kicker...\n",NOMBRES_JUGADAS[catJugador]);
-
+           printf("  " T_AMARILLO "[!] Ambos tienen %s de igual valor. Evaluando desempate por Kicker..." T_RESET "\n", NOMBRES_JUGADAS[catJugador]);
             int ganadorDesempate = DesempatarManos(manoJugador, manoMaquina);
 
             if(ganadorDesempate == 1){
-                printf("¡GANASTE EL DESEMPATE POR CARTA MAS ALTA / KICKER\n");
+                printf("  " T_VERDE "¡GANASTE EL DESEMPATE POR CARTA MÁS ALTA / KICKER! 🏆" T_RESET "\n");
             }else if(ganadorDesempate == 2){
-                printf("¡LA MAQUINA GANA EL DESEMPATE POR CARTA MAS ALTA / KICKER\n");
+                printf("  " T_ROJO "LA MÁQUINA GANA EL DESEMPATE POR CARTA MÁS ALTA / KICKER." T_RESET "\n");
             }else{
-                printf("¡EMPATE ABSOLUTO EN LA MESA! Se devuelven las apuestas.\n");
+                printf("  " T_AMARILLO "¡EMPATE ABSOLUTO EN LA MESA! Se devuelven las apuestas." T_RESET "\n");
             }
         }
     }
-
-    printf("==========================================\n");
+    printf(T_AMARILLO "═══════════════════════════════════════════════════════════" T_RESET "\n");
 }
 
 
 //Ordena las 5 cartas de la mano de menor a mayor segun su valor (1 al 13)
 // Facilita la comparacion de escaleras y desempatar por carta alta (kicker)
-void OrdenarMano(Carta mano[]){
+void OrdenarMano(Carta_t mano[]){
     //Bucle exterior: controla las pasadas necesarias sobre el arreglo
     for (int i = 0; i<4; i++){
         //Bucle interior: compara elementos adyacentes y los intercambia si estan desordenados
@@ -377,7 +446,7 @@ void OrdenarMano(Carta mano[]){
             //Si la carta actual tiene un valor mayor que la siguiente...
             if(mano[j].valor > mano[j+1].valor){
                 //Intercambio clasico de posiciones utilizando una variable auxiliar "temp"
-                Carta temp = mano[j];
+                Carta_t temp = mano[j];
                 mano[j] = mano[j+1];
                 mano[j+1] = temp;
             }
@@ -388,7 +457,7 @@ void OrdenarMano(Carta mano[]){
 //Resuelve un empate cuando ambos jugadores tienen la misma jjugada
 //Primero compara el valor de la combinacion (ej: Par de K vs Par de 8)
 //y si son iguales, desempata por la carrta mas alta / kicker
-int DesempatarManos(Carta manoJugador[], Carta manoMaquina[]){
+int DesempatarManos(Carta_t manoJugador[], Carta_t manoMaquina[]){
     //Antes de comparar, ordenamos ambas manos de menor a mayor (valores 1 al 13)
     OrdenarMano(manoJugador);
     OrdenarMano(manoMaquina);
@@ -470,7 +539,7 @@ int ObtenerValorVirtual(int valor){
 
 //Busca el valor numerico de la combinacion principal (Par, Trio, Poker)
 //asignando peso alto al As (14) para comparar combinaciones correctamente
-int ObtenerValorCombinacion(Carta mano[], int jerarquia){
+int ObtenerValorCombinacion(Carta_t mano[], int jerarquia){
     int valores[14] = {0};
 
     //Contamos cuantas cartas hay de cada valor
@@ -518,7 +587,7 @@ int ObtenerValorCombinacion(Carta mano[], int jerarquia){
         }
 
         //Una vez identificados los 2 pares, comparamos cual es el mas alto:
-        //Multiplicamos el par mayor por 1000 para darle prioridad
+        //Multiplicamos el par mayor por 100 para darle prioridad
         //Ej: par de ases (14) y par de 2 (2) -> (14*100) + 2= 1402
         if(par1 > par2){
             return (par1*100) + par2;
@@ -543,17 +612,34 @@ int ObtenerValorCombinacion(Carta mano[], int jerarquia){
 
 float RealizarApuesta(float *saldo, float apuestaMinima){
     float apuesta = 0.0f; //Variable para almacenar el monto digitado
-    int leidos = 0;       //Variable para verificar si sacnf leyo un numero valido
+
+
+    // Validacion previa: Si la caja del casino está en negativo o en cero, la casa no puede igualar
+    if(cajaCasino <= 0.0f){
+        system("clear || cls");
+        printf("\n" T_ROJO "╔═══════════════════════════════════════════════════════════╗\n");
+        printf("║         [!] MESA VIP CERRADA TEMPORALMENTE                ║\n");
+        printf("╠═══════════════════════════════════════════════════════════╣\n");
+        printf("  La banca del casino se encuentra sin fondos   \n", cajaCasino);
+        printf("  No hay respaldo para igualar apuestas en este momento.     \n");
+        printf("╚═══════════════════════════════════════════════════════════╝" T_RESET "\n");
+        printf("Presione ENTER para regresar al menú...");
+
+        while(getchar() != '\n');
+        getchar();
+        return 0.0f; // Aborta la partida
+    }
+
 
     //Validacion previa para verificar si el jugador tiene saldoo suficiente
     if(*saldo < apuestaMinima){
-        printf("\n================================================\n");
-        printf("       MESA DE POKER - SALDO INSUFICIENTE         \n");
-        printf("================================================\n");
-        printf(" [!] No tenes el saldo minimo de $%.2f para jugar.\n", apuestaMinima);
-        printf("  Tu saldo actual es: $%.2f\n", *saldo);
-        printf("================================================\n");
-        printf("Presiona ENTER para regresar al menu...");
+        printf("\n" T_ROJO "╔═══════════════════════════════════════════════════════════╗\n");
+        printf("║         [!] SALDO INSUFICIENTE PARA ENTRAR A MESA         ║\n");
+        printf("╠═══════════════════════════════════════════════════════════╣" T_RESET "\n");
+        printf("  Monto Mínimo Requerido : " T_AMARILLO "$%.2f" T_RESET "\n", apuestaMinima);
+        printf("  Tu Saldo Actual        : " T_ROJO "$%.2f" T_RESET "\n", *saldo);
+        printf(T_ROJO "╚═══════════════════════════════════════════════════════════╝" T_RESET "\n");
+        printf("Presione ENTER para regresar al menú...");
 
         //Limpiamos cualquier salto de linea residual en el bufer antes de pausar
         while(getchar() != '\n');
@@ -564,13 +650,14 @@ float RealizarApuesta(float *saldo, float apuestaMinima){
 
     //Se repite hasta la apuesta sea valida
     do{
-        printf("\n================================================\n");
-        printf("                     MESA DE APUESTAS             \n");
-        printf("================================================\n");
-        printf(" Tu saldo disponible: $%.2f\n", *saldo);
-        printf(" Apuesta minima     : $%.2f\n", apuestaMinima);
-        printf("================================================\n");
-        printf("Ingrese el monto a apostar: $");
+        system("clear || cls");
+        printf("\n" T_AMARILLO "╔═══════════════════════════════════════════════════════════╗\n");
+        printf("║               " T_VERDE "  🪙 MESA DE APUESTAS DE POKER 🪙  " T_RESET T_AMARILLO "           ║\n");
+        printf("╠═══════════════════════════════════════════════════════════╣" T_RESET "\n");
+        printf(T_AMARILLO "║ " T_VERDE " 💵 Saldo Disponible : " T_AMARILLO "$%-22.2f " T_AMARILLO "           ║\n", *saldo);
+        printf(T_AMARILLO "║ " T_CIAN " 📌 Apuesta Mínima   : " T_AMARILLO "$%-22.2f " T_AMARILLO "           ║\n", apuestaMinima);
+        printf(T_AMARILLO "╚═══════════════════════════════════════════════════════════╝" T_RESET "\n");
+        printf(" " T_BLANCO "Ingrese el monto a apostar: " T_VERDE "$" T_RESET);
 
         if(!LeerFloatValido(&apuesta)){
             apuesta = -1.0f; //fuerza repetir si ingresan letras o caracteres extra
@@ -578,9 +665,11 @@ float RealizarApuesta(float *saldo, float apuestaMinima){
 
         //Mensajes de error especificos segun la falta cometida
         if(apuesta < apuestaMinima){
-            printf("[x] Error: La apuesta minima permitida es $%.2f\n",apuestaMinima);
+            printf("\n" T_ROJO "[x] Error: La apuesta minima permitida es $%.2f" T_RESET "\n",apuestaMinima);
+            Sleep(2000);
         }else if(apuesta > *saldo){
-            printf("[x] Error: No podes apostar mas de lo que tenes ($%.2f)\n",*saldo);
+            printf("\n" T_ROJO "[x] Error: No podes apostar mas de lo que tenes ($%.2f)" T_RESET "\n",*saldo);
+            Sleep(2000);
         }
 
     //El ciclo continua si la apuesta es menor al minimo o mayor al saldo disponible
@@ -591,7 +680,8 @@ float RealizarApuesta(float *saldo, float apuestaMinima){
     //Restamos el momto apostado directamente en la variable original usando (*saldo)
     *saldo -= apuesta;
 
-    printf("\n[x] Apuesta de $%.2f realizada con exito. Saldo restante: $%.2f\n",apuesta,*saldo);
+    printf("\n" T_VERDE "[✔] Apuesta de $%.2f realizada con exito. Saldo restante: $%.2f" T_RESET "\n",apuesta,*saldo);
+    Sleep(2000);
 
     return apuesta; //Retornamos el monto apostado para usarlo en la mano actual
 }
@@ -605,23 +695,23 @@ int LeerEnteroValido(int *num) {
     char charSiguiente;
 
     if (leidos == 1) {
-        charSiguiente = getchar(); // Captura el car�cter justo despu�s del n�mero
+        charSiguiente = getchar(); // Captura el caracter justo despues del numero
         if (charSiguiente == '\n') {
-            return 1; // Entrada perfecta: N�mero + ENTER
+            return 1; // Entrada perfecta: Numero + ENTER
         } else {
-            // Hab�a caracteres extra pegados (ej: "5abc" o "5.5")
-            while (getchar() != '\n'); // Limpia el resto de la l�nea
+            //si  Habia caracteres extra pegados (ej: "5abc" o "5.5")
+            while (getchar() != '\n'); // Limpia el resto de la linea
             return 0;
         }
     } else {
-        // Fall� completamente la lectura (ej: "abc")
-        while (getchar() != '\n'); // Limpia el b�fer
+        // Fallo completamente la lectura (ej: "abc")
+        while (getchar() != '\n'); // Limpia el bufer
         return 0;
     }
 }
 
 
-// Devuelve 1 si se ley� un float limpio seguido de ENTER. Devuelve 0 si hab�a letras o basura.
+// Devuelve 1 si se leyo un float limpio seguido de ENTER. Devuelve 0 si hab�a letras o basura.
 int LeerFloatValido(float *num) {
     int leidos = scanf("%f", num);
     char charSiguiente;
@@ -649,10 +739,10 @@ int LeerFloatValido(float *num) {
 // 2. Inicializa y mezcla el mazo de cartas
 // 3. Reparte las cartas al jugador y a la m�quina.
 // 4. Ejecuta las fases de descarte interactivo y autom�tico.
-// 5. Eval�a las manos, determina al ganador y actualiza el saldo real.
+// 5. Evalua las manos, determina al ganador y actualiza el saldo real.
 // PARAMETRO: float *saldo -> Puntero al saldo real del usuario.
 
-void JugarPartidaPoker(Usuario *usuario){
+void JugarPartidaPoker(Usuario_t *usuario){
 
     float apuestaMinima = 5000.0f;     //Definimos el costo minimo para poder jugar una mano
     int opcionBucle = 0;               //Almacena la decision del jugador (1 para seguir,2 para salir)
@@ -660,9 +750,9 @@ void JugarPartidaPoker(Usuario *usuario){
     //Bucle que garantiza que se ejecute la mano al menos una vez al entrar
     do{
         //Definicion del mazo de 52 cartas y las manos de 5 cartas para cada uno
-        Carta mazo[52];
-        Carta manoJugador[5];
-        Carta manoMaquina[5];
+        Carta_t mazo[52];
+        Carta_t manoJugador[5];
+        Carta_t manoMaquina[5];
 
         int posicionMazo = 0;           //Indice para saber por qu� carta del mazo vamos
 
@@ -672,7 +762,7 @@ void JugarPartidaPoker(Usuario *usuario){
         float montoApostado = RealizarApuesta(&(usuario->saldo), apuestaMinima);
 
         //Si montoApostado devuelve 0.0, significa que el jugador no tenia saldo
-        //suficiente o cancel�. Usamos return para abortar la partida e ir al menu
+        //suficiente o cancela. Usamos return para abortar la partida e ir al menu
 
         if(montoApostado == 0.0f){
             return;
@@ -699,10 +789,12 @@ void JugarPartidaPoker(Usuario *usuario){
         // ==========================================
         AnimacionMezclando();
 
+        //Limpiamos la pantalla para mostrar la mesa limpia con tu mano inicial
+        system("clear || cls");
         //Mostramos las cartas iniciales al usuario
         MostrarMano(manoJugador,5, "Jugador");
         int jugadaInicial = EvaluarMano(manoJugador);
-        printf("-> Tu jugada: %s\n", NOMBRES_JUGADAS[jugadaInicial]);
+        printf("  " T_CIAN "-> Tu jugada actual: " T_AMARILLO "%s" T_RESET "\n", NOMBRES_JUGADAS[jugadaInicial]);
 
         //El usuario elige de 0 a 5 cartas para reponer del mazo
         DescartarJugador(manoJugador, mazo, &posicionMazo);
@@ -710,11 +802,17 @@ void JugarPartidaPoker(Usuario *usuario){
         //La maquina evalua automaticamente que cartas le conviene cambiar
         DescartarMaquina(manoMaquina, mazo, &posicionMazo);
 
-
+        //Limpiamos la pantalla para mostrar la mesa limpia con tu mano inicial
+        system("clear || cls");
         //Mostramos la mano definitiva del jugador tras el descarte
         MostrarMano(manoJugador,5, "Jugador (Mano Final)");
         int jugadaFinal = EvaluarMano(manoJugador);
-        printf("-> Tu jugada final: %s\n", NOMBRES_JUGADAS[jugadaFinal]);
+        printf("  " T_CIAN "-> Tu jugada final  : " T_AMARILLO "%s" T_RESET "\n", NOMBRES_JUGADAS[jugadaFinal]);
+
+        // Pausa breve para dar suspenso antes de ver las cartas de la casa
+        printf("\n  " T_BLANCO "Presiona ENTER para ver el resultado de la Casa..." T_RESET);
+        fflush(stdin);
+        getchar();
 
         //Imprime la mano de la maquina y declara el resultado de la partida
         DeterminarGanador(manoJugador,manoMaquina);
@@ -726,10 +824,10 @@ void JugarPartidaPoker(Usuario *usuario){
         int valMaquina = ObtenerValorCombinacion(manoMaquina, catMaquina);
 
         //Resolucion de saldos segun el resultado
-        if((catJugador > catMaquina)||(catJugador == catMaquina)&&(valJugador > valMaquina)){
+        if((catJugador > catMaquina) || ((catJugador == catMaquina) && (valJugador > valMaquina))){
             float premio = montoApostado*2;
             usuario->saldo += premio; //Actualizamos el saldo del usuario sumando el premio ganado
-            printf("\n[$$$] ¡Ganaste $%.2f! Tu saldo es: $%.2f\n",premio, usuario->saldo);
+            printf("\n  " T_VERDE "[$$$] ¡Ganaste $%.2f! Tu saldo actual es: $%.2f" T_RESET "\n", premio, usuario->saldo);
 
             //La casa paga (actualiza caja del casino)
             ActualizarCajaCasino(&cajaCasino, montoApostado, 1);
@@ -738,14 +836,20 @@ void JugarPartidaPoker(Usuario *usuario){
             //El casino pierde unicamente el monto de la apuesta en esta mano
             usuario->gananciaAdmin -= montoApostado;
             
-        }else if((catMaquina > catJugador)||(catJugador == catMaquina)&&(valMaquina > valJugador)){
-            printf("\n[-] Perdiste $%.2f. Tu saldo actual es: $%.2f\n", montoApostado, usuario->saldo);
+        }else if((catMaquina > catJugador) || ((catJugador == catMaquina) && (valMaquina > valJugador))){
+            printf("\n  " T_ROJO "[-] Perdiste $%.2f. Tu saldo actual es: $%.2f" T_RESET "\n", montoApostado, usuario->saldo);
 
-            //La casa gna (actualiza caja del casino)
-            ActualizarCajaCasino(&cajaCasino, montoApostado, -1);
+           //Controlc contable en derrota Poker
+           if(usuario->dineroDepositado >= montoApostado){
+                usuario->dineroDepositado -= montoApostado;
+           }else{
+                float diferenciaGanancia = montoApostado - usuario->dineroDepositado;
+                usuario->dineroDepositado = 0;
+                ActualizarCajaCasino(&cajaCasino, diferenciaGanancia, -1);
+           }
 
-            //Auditoria comercial individual: el casino gana frente a este usuario
-            usuario->gananciaAdmin += montoApostado;
+           //Auditoria comercial: el casino gana frente a este usuario
+           usuario->gananciaAdmin += montoApostado;
 
         }else{
             int desempate = DesempatarManos(manoJugador, manoMaquina);
@@ -754,22 +858,30 @@ void JugarPartidaPoker(Usuario *usuario){
                 //El jugador gana el desempate
                 float premio = montoApostado * 2;
                 usuario->saldo += premio;
-                printf("\n[$$$] ¡Ganaste el desempate y te llevas $%.2f! Saldo actual: $%.2f\n", premio, usuario->saldo);
+                printf("\n  " T_VERDE "[$$$] ¡Ganaste el desempate y te llevás $%.2f! Saldo actual: $%.2f" T_RESET "\n", premio, usuario->saldo);
 
                 ActualizarCajaCasino(&cajaCasino, montoApostado, 1);
                 usuario->gananciaAdmin -= montoApostado;
 
             }else if(desempate == 2){
                 //La maquina gana el desempate
-                printf("\n[-] Perdiste el desempate de $%.2f. Saldo actual: $%.2f\n", montoApostado, usuario->saldo);
+                printf("\n  " T_ROJO "[-] Perdiste el desempate de $%.2f. Saldo actual: $%.2f" T_RESET "\n", montoApostado, usuario->saldo);
 
-                ActualizarCajaCasino(&cajaCasino, montoApostado, -1);
+                // CONTROL CONTABLE EN DESEMPATE PERDIDO
+                if (usuario->dineroDepositado >= montoApostado) {
+                    usuario->dineroDepositado -= montoApostado;
+                } else {
+                    float diferenciaGanancia = montoApostado - usuario->dineroDepositado;
+                    usuario->dineroDepositado = 0;
+                    ActualizarCajaCasino(&cajaCasino, diferenciaGanancia, -1);
+                }
+                
                 usuario->gananciaAdmin += montoApostado;
                 
             }else{
                 //Empate absoluto: se devuelve la apuesta intacta
                 usuario->saldo += montoApostado;
-                printf("\n[=] Empate absoluto. Se te devuelve la apuesta de $%.2f. Saldo actual: $%.2f\n", montoApostado, usuario->saldo);
+                printf("\n  " T_AMARILLO "[=] Empate absoluto. Se te devuelve la apuesta de $%.2f. Saldo actual: $%.2f" T_RESET "\n", montoApostado, usuario->saldo);
 
                 //En empate la caja no cambia, pero cuenta cmo partida jugada y empate
                 ActualizarCajaCasino(&cajaCasino, montoApostado, 0);
@@ -780,20 +892,20 @@ void JugarPartidaPoker(Usuario *usuario){
         //Verificamos si al jugador le alcanza el saldo para volver a jugar
         if(usuario->saldo >= apuestaMinima){
             do{
-                printf("\n¡Quieres jugar otra mano? (1. Si / 2. No): ");
+                printf("\n" T_BLANCO "¿Querés jugar otra mano? (" T_VERDE "1. Sí" T_BLANCO " / " T_ROJO "2. No" T_BLANCO "): " T_RESET);
 
                 if(!LeerEnteroValido(&opcionBucle)){
                     opcionBucle = 0;
                 }
 
                 if((opcionBucle != 1)&&(opcionBucle != 2)){
-                    printf("[X] Error: Ingrese solo 1 para Si o 2 para No.\n");
+                    printf(T_ROJO "[X] Error: Ingrese solo 1 para Sí o 2 para No." T_RESET "\n");
                 }
             }while((opcionBucle != 1)&&(opcionBucle != 2));
 
         }else{
             //Si el saldo no alcanza, mostramos mensaje y forzamos la salida del ciclo
-            printf("\n[!] Tu saldo ($%.2f) es menor a la apuesta minima ($%.2f). Regresando al menu...\n",usuario->saldo,apuestaMinima);
+            printf("\n" T_ROJO "[!] Tu saldo ($%.2f) es menor a la apuesta mínima ($%.2f). Regresando al menú..." T_RESET "\n", usuario->saldo, apuestaMinima);
             printf("Presiona ENTER para continuar...");
             getchar();
             opcionBucle = 2; //Rompe la condicion del do-while
@@ -803,84 +915,84 @@ void JugarPartidaPoker(Usuario *usuario){
     }while(opcionBucle == 1);
 }
 
+// ============================================================================
+// 1. ANIMACIÓN DE BIENVENIDA VIP (Alineación Milimétrica Perfecta)
+// ============================================================================
 void AnimacionBienvenida() {
-    for (int i = 0; i < 4; i++) {
-        system("cls");
+    for (int i = 0; i < 3; i++) {
+        system("clear || cls");
         
-        printf("==========================================================\n");
-        printf("|  [C]  [D]  [T]  [P]   CASINO - GANO   [P]  [T]  [D]  [C] |\n");
-        printf("==========================================================\n");
-        printf("|                                                        |\n");
-        printf("|          * * * * * * * * * * * * * * * * * *           |\n");
-        printf("|          *     BIENVENIDO AL POKER         *           |\n");
-        printf("|          * * * * * * * * * * * * * * * * * *           |\n");
-        printf("|                                                        |\n");
-        printf("==========================================================\n\n");
+        printf("\n");
+        printf("  " T_AMARILLO "╔═════════════════════════════════════════════════╗\n");
+        printf("  ║    " T_ROJO "♥ " T_BLANCO "♦ " T_VERDE "♣ " T_CIAN "♠" T_AMARILLO "  CASINO GANO - SALÓN VIP  " T_CIAN "♠ " T_VERDE "♣ " T_BLANCO "♦ " T_ROJO "♥    " T_AMARILLO "║\n");
+        printf("  ╠═════════════════════════════════════════════════╣\n");
+        printf("  ║                                                 ║\n");
+        printf("  ║       " T_BLANCO "╔═══════╗         ╔═══════╗" T_AMARILLO "               ║\n");
+        printf("  ║       " T_BLANCO "║ " T_ROJO "As ♥  " T_BLANCO "║         ║ " T_CIAN "K ♠  " T_BLANCO " ║" T_AMARILLO "               ║\n");
+        printf("  ║       " T_BLANCO "║   ♥   ║         ║   ♠   ║" T_AMARILLO "               ║\n");
+        printf("  ║       " T_BLANCO "║  As ♥ ║         ║  K ♠  ║" T_AMARILLO "               ║\n");
+        printf("  ║       " T_BLANCO "╚═══════╝         ╚═══════╝" T_AMARILLO "               ║\n");
+        printf("  ║                                                 ║\n");
+        printf("  ╚═════════════════════════════════════════════════╝\n" T_RESET);
         
         if (i % 2 == 0) {
-            printf("         >>>> [★] PRESIONA ENTER PARA REPARTIR [★] <<<<          \n");
+            printf("\n        " T_VERDE "   >>>> 🪙 PREPARANDO MESA Y FICHAS VIP... <<<<  " T_RESET "\n");
         } else {
-            printf("         >>>>  PRESIONA ENTER PARA REPARTIR       <<<<          \n");
+            printf("\n        " T_CIAN "   >>>> 🪙 PREPARANDO MESA Y FICHAS VIP... <<<<  " T_RESET "\n");
         }
         
-        // Pausa de 600 milisegundos (pudés subirlo a 800 o 1000 si lo querés más lento)
-        Sleep(600); 
-        
-        system("cls");
-        printf("==========================================================\n");
-        printf("|  [C]  [D]  [T]  [P]   CASINO - GANO   [P]  [T]  [D]  [C] |\n");
-        printf("==========================================================\n");
-        printf(" +------+ +------+ +------+ +------+ +------+          \n");
-        printf(" | 10   | | J    | | Q    | | K    | | A    |          \n");
-        printf(" |  [P] | |  [P] | |  [P] | |  [P] | |  [P] |          \n");
-        printf(" |   10 | |    J | |    Q | |    K | |    A |          \n");
-        printf(" +------+ +------+ +------+ +------+ +------+          \n");
-        printf("==========================================================\n");
-        printf("         . . . PREPARANDO MESA DE POKER . . .            \n");
-        
-        Sleep(600); // Pausa de 600 milisegundos
+        Sleep(1000); 
     }
 }
 
-// Animación de mezclado en cascada
+// ============================================================================
+// 2. ANIMACIÓN DE MEZCLADO EN CASCADA
+// ============================================================================
 void AnimacionMezclando() {
-    for (int f = 0; f < 2; f++) {
-        system("cls");
-        printf("\n            [ MEZCLANDO EN CASCADA ]\n\n");
-        printf("      +------+                      +------+\n");
-        printf("      |######|                      |######|\n");
-        printf("      +------+                      +------+\n\n\n");
-        Sleep(800); // 0.8 segundos
-        
-        system("cls");
-        printf("\n            [ MEZCLANDO EN CASCADA ]\n\n");
-        printf("          +------+              +------+\n");
-        printf("          |######|              |######|\n");
-        printf("          +------+              +------+\n");
-        printf("                \\\\              /\n");
-        printf("                 \\\\            /\n");
-        Sleep(900); // 0.9 segundos
-    }
-    system("cls || clear");
+    system("clear || cls");
+    printf("\n" T_CIAN "          [ CRUPIER BARAJANDO EL MAZO EN CASCADA ]" T_RESET "\n\n");
+    printf("        " T_AMARILLO "╔═══════╗                   ╔═══════╗\n");
+    printf("        ║" T_ROJO "░░░░░░░" T_AMARILLO "║                   ║" T_CIAN "░░░░░░░" T_AMARILLO "║\n");
+    printf("        ║" T_ROJO "░░ 🂠 ░░" T_AMARILLO "║                   ║" T_CIAN "░░ 🂠 ░░" T_AMARILLO "║\n");
+    printf("        ║" T_ROJO "░░░░░░░" T_AMARILLO "║                   ║" T_CIAN "░░░░░░░" T_AMARILLO "║\n");
+    printf("        ╚═══════╝                   ╚═══════╝" T_RESET "\n");
+    Sleep(1000);
+
+    system("clear || cls");
+    printf("\n" T_CIAN "          [ CRUPIER BARAJANDO EL MAZO EN CASCADA ]" T_RESET "\n\n");
+    printf("              " T_AMARILLO "╔═══════╗       ╔═══════╗\n");
+    printf("              ║" T_ROJO "░░░░░░░" T_AMARILLO "║       ║" T_CIAN "░░░░░░░" T_AMARILLO "║\n");
+    printf("              ║" T_ROJO "░░ 🂠 ░░" T_AMARILLO "║       ║" T_CIAN "░░ 🂠 ░░" T_AMARILLO "║\n");
+    printf("              ║" T_ROJO "░░░░░░░" T_AMARILLO "║       ║" T_CIAN "░░░░░░░" T_AMARILLO "║\n");
+    printf("              ╚═══════╝       ╚═══════╝\n");
+    printf("                      " T_AMARILLO "\\\\     //\n");
+    printf("                       \\\\   //" T_RESET "\n");
+    Sleep(1100);
+
+    system("clear || cls");
 }
 
-// Animación de apuesta confirmada
+
+// ============================================================================
+// PANTALLA DE APUESTA PRO: MARCOS DOBLES Y EFECTO FICHAS EN MESA
+// ============================================================================
 void AnimacionApuesta(int montoApuesta) {
-    system("cls");
-    printf("  /\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\\n");
-    printf(" <   [!] APUESTA CONFIRMADA EN MESA DE POKER [!]    >\n");
-    printf("  \\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\n");
-    printf("  |                                                 |\n");
-    printf("  |   Jugador pone : [ $%d ]                       |\n", montoApuesta);
-    printf("  |   Casa iguala  : [ $%d ]                       |\n", montoApuesta);
-    printf("  |   ------------------------------------------    |\n");
-    printf("  |   POZO TOTAL   : >>> $%d <<<                  |\n", montoApuesta * 2);
-    printf("  |                                                 |\n");
-    printf("  \\=================================================/\n\n");
+    system("clear || cls");
     
-    printf("         >>> Presiona ENTER para repartir cartas <<<         \n");
+    printf("\n");
+    printf("  " T_AMARILLO "╔═════════════════════════════════════════════════════════╗\n");
+    printf("  ║   " T_ROJO " [!] MESA DE POKER: APUESTA CONFIRMADA [!] " T_AMARILLO "           ║\n");
+    printf("  ╠═════════════════════════════════════════════════════════╣\n");
+    printf("  ║                                                         ║\n");
+    printf("      " T_VERDE "Jugador ingresa " T_BLANCO ":  " T_AMARILLO "[ 🪙  $%d.00 ]" T_BLANCO "                       \n", montoApuesta);
+    printf("      " T_VERDE "Casa iguala     " T_BLANCO ":  " T_AMARILLO "[ 🪙  $%d.00 ]" T_BLANCO "                       \n", montoApuesta);
+    printf("      " T_BLANCO "───────────────────────────────────────────────────    \n");
+    printf("      " T_CIAN "POZO EN MESA    " T_BLANCO ":  " T_VERDE " 💵  $%d.00 TOTAL " T_BLANCO "                  \n", montoApuesta * 2);
+    printf("  ║                                                         ║\n");
+    printf("  ╚═════════════════════════════════════════════════════════╝\n\n" T_RESET);
     
-    // Limpiamos el buffer por las dudas y esperamos una tecla del usuario
+    printf("        " T_CIAN ">>>> PRESIONA <<ENTER>> PARA REPARTIR <<<<\n" T_RESET);
+    
     fflush(stdin);
     getchar(); 
 }
